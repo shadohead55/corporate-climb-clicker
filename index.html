@@ -6,45 +6,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
       text-align: center;
-      margin-top: 50px;
-      padding: 0 10px;
+      margin: 0;
+      padding: 40px 20px;
+      color: #102a43;
     }
-    #click-btn {
-      padding: 20px 40px;
-      font-size: 24px;
-      margin: 10px;
-    }
-    .upgrade {
-      margin: 10px;
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
     }
     #money {
-      font-size: 32px;
-      margin-bottom: 20px;
+      font-size: 2em;
+      margin: 20px 0;
+      color: #0b6efe;
     }
     button {
       width: 90%;
-      max-width: 300px;
+      max-width: 320px;
+      padding: 15px;
       font-size: 18px;
+      background-color: #0b6efe;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 10px auto;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #094ec1;
+    }
+    .upgrade {
+      margin-top: 10px;
+    }
+    .highlight {
+      color: #2f855a;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #627d98;
+    }
+    footer a {
+      color: #0b6efe;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <h1>Corporate Climb v1.0.0</h1>
   <div id="money">$0</div>
-  <button id="click-btn">Work</button>
+  <button id="click-btn">💼 Work</button>
+  <div class="highlight">Click = +$<span id="click-value">1</span></div>
+
   <div class="upgrade">
-    <button id="hire-intern">Hire Intern ($10)</button>
+    <button id="hire-intern">🤝 Hire Intern ($10)</button>
     <div id="intern-count">Interns: 0</div>
   </div>
   <div class="upgrade">
-    <button id="prestige-btn">Sell Company (Prestige)</button>
-    <div id="prestige-level">Prestige: 0</div>
+    <button id="prestige-btn">🏢 Buy Building ($1,000)</button>
+    <div id="prestige-level">Buildings: 0</div>
+    <div id="prestige-bonus" class="highlight"></div>
   </div>
   <div class="upgrade">
-    <button id="reset-btn">Reset Game</button>
+    <button id="reset-btn">🗑️ Reset Game</button>
   </div>
+
+  <footer>
+    Made with ❤️ by <a href="https://www.linkedin.com/in/anmolshah/" target="_blank">Anmol Shah</a>
+  </footer>
 
   <script>
     let money = parseFloat(localStorage.getItem('money')) || 0;
@@ -58,6 +96,8 @@
     const internCountEl = document.getElementById('intern-count');
     const prestigeBtn = document.getElementById('prestige-btn');
     const prestigeLevelEl = document.getElementById('prestige-level');
+    const clickValueEl = document.getElementById('click-value');
+    const prestigeBonusEl = document.getElementById('prestige-bonus');
     const resetBtn = document.getElementById('reset-btn');
 
     function saveGame() {
@@ -69,7 +109,8 @@
     function updateDisplay() {
       moneyEl.innerText = `$${Math.floor(money)}`;
       internCountEl.innerText = `Interns: ${internCount}`;
-      prestigeLevelEl.innerText = `Prestige: ${prestige}`;
+      prestigeLevelEl.innerText = `Buildings: ${prestige}`;
+      clickValueEl.innerText = 1 + prestige * 2;
     }
 
     clickBtn.addEventListener('click', () => {
@@ -91,7 +132,14 @@
       if (money >= 1000) {
         money = 0;
         internCount = 0;
-        prestige++;
+        let bonus = 1;
+        if (Math.random() < 0.1) {
+          bonus = 2;
+          prestigeBonusEl.innerText = "🔥 Lucky Streak! Buildings Doubled!";
+        } else {
+          prestigeBonusEl.innerText = "";
+        }
+        prestige += bonus;
         clickValue = 1 + prestige * 2;
         updateDisplay();
         saveGame();
@@ -105,6 +153,7 @@
         prestige = 0;
         clickValue = 1;
         localStorage.clear();
+        prestigeBonusEl.innerText = "";
         updateDisplay();
       }
     });
