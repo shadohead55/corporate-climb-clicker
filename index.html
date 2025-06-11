@@ -130,12 +130,11 @@
 
     prestigeBtn.addEventListener('click', () => {
       if (money >= 1000) {
-        money = 0;
-        internCount = 0;
+        money -= 1000;
         let bonus = 1;
         if (Math.random() < 0.1) {
           bonus = 2;
-          prestigeBonusEl.innerText = "🔥 Lucky Streak! Buildings Doubled!";
+          prestigeBonusEl.innerText = "🔥 Lucky Streak! 2x Buildings Bought!";
         } else {
           prestigeBonusEl.innerText = "";
         }
