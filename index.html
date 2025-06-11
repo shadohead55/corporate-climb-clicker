@@ -2,16 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Corporate Climb Clicker</title>
+  <title>Corporate Climb Clicker v1.0.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin-top: 50px;
+      padding: 0 10px;
     }
     #click-btn {
       padding: 20px 40px;
       font-size: 24px;
+      margin: 10px;
     }
     .upgrade {
       margin: 10px;
@@ -20,26 +23,34 @@
       font-size: 32px;
       margin-bottom: 20px;
     }
+    button {
+      width: 90%;
+      max-width: 300px;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
-  <h1>Corporate Climb</h1>
+  <h1>Corporate Climb v1.0.0</h1>
   <div id="money">$0</div>
   <button id="click-btn">Work</button>
   <div class="upgrade">
     <button id="hire-intern">Hire Intern ($10)</button>
-    <span id="intern-count">Interns: 0</span>
+    <div id="intern-count">Interns: 0</div>
   </div>
   <div class="upgrade">
     <button id="prestige-btn">Sell Company (Prestige)</button>
-    <span id="prestige-level">Prestige: 0</span>
+    <div id="prestige-level">Prestige: 0</div>
+  </div>
+  <div class="upgrade">
+    <button id="reset-btn">Reset Game</button>
   </div>
 
   <script>
-    let money = 0;
-    let internCount = 0;
-    let prestige = 0;
-    let clickValue = 1;
+    let money = parseFloat(localStorage.getItem('money')) || 0;
+    let internCount = parseInt(localStorage.getItem('internCount')) || 0;
+    let prestige = parseInt(localStorage.getItem('prestige')) || 0;
+    let clickValue = 1 + prestige * 2;
 
     const moneyEl = document.getElementById('money');
     const clickBtn = document.getElementById('click-btn');
@@ -47,10 +58,24 @@
     const internCountEl = document.getElementById('intern-count');
     const prestigeBtn = document.getElementById('prestige-btn');
     const prestigeLevelEl = document.getElementById('prestige-level');
+    const resetBtn = document.getElementById('reset-btn');
+
+    function saveGame() {
+      localStorage.setItem('money', money);
+      localStorage.setItem('internCount', internCount);
+      localStorage.setItem('prestige', prestige);
+    }
+
+    function updateDisplay() {
+      moneyEl.innerText = `$${Math.floor(money)}`;
+      internCountEl.innerText = `Interns: ${internCount}`;
+      prestigeLevelEl.innerText = `Prestige: ${prestige}`;
+    }
 
     clickBtn.addEventListener('click', () => {
       money += clickValue;
       updateDisplay();
+      saveGame();
     });
 
     hireInternBtn.addEventListener('click', () => {
@@ -58,6 +83,7 @@
         money -= 10;
         internCount++;
         updateDisplay();
+        saveGame();
       }
     });
 
@@ -68,19 +94,28 @@
         prestige++;
         clickValue = 1 + prestige * 2;
         updateDisplay();
+        saveGame();
       }
     });
 
-    function updateDisplay() {
-      moneyEl.innerText = `$${Math.floor(money)}`;
-      internCountEl.innerText = `Interns: ${internCount}`;
-      prestigeLevelEl.innerText = `Prestige: ${prestige}`;
-    }
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset all progress?')) {
+        money = 0;
+        internCount = 0;
+        prestige = 0;
+        clickValue = 1;
+        localStorage.clear();
+        updateDisplay();
+      }
+    });
 
     setInterval(() => {
       money += internCount * (1 + prestige);
       updateDisplay();
+      saveGame();
     }, 1000);
+
+    updateDisplay();
   </script>
 </body>
 </html>
