@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Corporate Climb Clicker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #click-btn {
+      padding: 20px 40px;
+      font-size: 24px;
+    }
+    .upgrade {
+      margin: 10px;
+    }
+    #money {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Corporate Climb</h1>
+  <div id="money">$0</div>
+  <button id="click-btn">Work</button>
+  <div class="upgrade">
+    <button id="hire-intern">Hire Intern ($10)</button>
+    <span id="intern-count">Interns: 0</span>
+  </div>
+  <div class="upgrade">
+    <button id="prestige-btn">Sell Company (Prestige)</button>
+    <span id="prestige-level">Prestige: 0</span>
+  </div>
+
+  <script>
+    let money = 0;
+    let internCount = 0;
+    let prestige = 0;
+    let clickValue = 1;
+
+    const moneyEl = document.getElementById('money');
+    const clickBtn = document.getElementById('click-btn');
+    const hireInternBtn = document.getElementById('hire-intern');
+    const internCountEl = document.getElementById('intern-count');
+    const prestigeBtn = document.getElementById('prestige-btn');
+    const prestigeLevelEl = document.getElementById('prestige-level');
+
+    clickBtn.addEventListener('click', () => {
+      money += clickValue;
+      updateDisplay();
+    });
+
+    hireInternBtn.addEventListener('click', () => {
+      if (money >= 10) {
+        money -= 10;
+        internCount++;
+        updateDisplay();
+      }
+    });
+
+    prestigeBtn.addEventListener('click', () => {
+      if (money >= 1000) {
+        money = 0;
+        internCount = 0;
+        prestige++;
+        clickValue = 1 + prestige * 2;
+        updateDisplay();
+      }
+    });
+
+    function updateDisplay() {
+      moneyEl.innerText = `$${Math.floor(money)}`;
+      internCountEl.innerText = `Interns: ${internCount}`;
+      prestigeLevelEl.innerText = `Prestige: ${prestige}`;
+    }
+
+    setInterval(() => {
+      money += internCount * (1 + prestige);
+      updateDisplay();
+    }, 1000);
+  </script>
+</body>
+</html>
