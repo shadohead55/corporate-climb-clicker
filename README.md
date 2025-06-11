@@ -11,7 +11,7 @@ Click to work, hire interns to automate your income, and prestige by selling you
 - Fully client-side, runs in any modern browser
 
 ## 💻 How to Run
-Download or clone the repository, then open `corporate-climb.html` in your browser.
+Download or clone the repository, then open `index.html` in your browser.
 
 ## 🌐 Live Demo
 [Play the game here](https://shadohead55.github.io/corporate-climb-clicker/)
