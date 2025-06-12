@@ -1,0 +1,213 @@
+<!-- Updated with inline comments and corrected structure -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Corporate Climb Clicker v1.1 </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+      color: #102a43;
+    }
+    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    #money { font-size: 2em; margin: 20px 0; color: #0b6efe; }
+    button {
+      width: 90%; max-width: 320px; padding: 15px; font-size: 18px;
+      background-color: #0b6efe; color: white; border: none;
+      border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 10px auto; cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover { background-color: #094ec1; }
+    .upgrade { margin-top: 10px; }
+    .highlight { color: #2f855a; font-weight: bold; margin-top: 5px; }
+    .glow { animation: glow-pulse 1s infinite alternate; }
+    @keyframes glow-pulse {
+      from { box-shadow: 0 0 5px #0b6efe; }
+      to { box-shadow: 0 0 20px #0b6efe; }
+    }
+    footer {
+      margin-top: 40px; font-size: 0.9em; color: #627d98;
+    }
+    footer a { color: #0b6efe; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Corporate Climb v1.1 </h1>
+  <div id="money">$0</div>
+  <button id="click-btn">💼 Work</button>
+  <div class="highlight">Click = +$<span id="click-value">1</span></div>
+
+  <div class="upgrade">
+    <button id="hire-intern">🤝 Hire Intern ($10)</button>
+    <div id="intern-count">Interns: 0<br><span id="toxic-interns" style="color:green">Toxic: 0</span></div>
+  </div>
+  <div class="upgrade">
+    <button id="prestige-btn">🏢 Buy Building ($1,000)</button>
+    <div id="prestige-level">Buildings: 0</div>
+    <div id="prestige-bonus" class="highlight"></div>
+  </div>
+  <div class="upgrade">
+    <button id="wellness-btn">🧘 Wellness Initiative (Pause Income for 10s, Costs Half of $)</button>
+    <div id="wellness-msg" style="color:green; font-style:italic; margin-top:5px;"></div>
+  </div>
+  <div class="upgrade">
+    <button id="reset-btn">🗑️ Reset Game</button>
+  </div>
+
+  <footer>
+    Made with ❤️ by <a href="https://www.linkedin.com/in/anmolshah/" target="_blank">Anmol Shah</a>
+  </footer>
+
+  <script>
+    let wellnessActive = false;
+    let money = parseFloat(localStorage.getItem('money')) || 0;
+    let internCount = parseInt(localStorage.getItem('internCount')) || 0;
+    let prestige = parseInt(localStorage.getItem('prestige')) || 0;
+    let toxicInternCount = 0;
+    let clickValue = 2 + prestige * 2;
+
+    const moneyEl = document.getElementById('money');
+    const clickBtn = document.getElementById('click-btn');
+    const hireInternBtn = document.getElementById('hire-intern');
+    const internCountEl = document.getElementById('intern-count');
+    const prestigeBtn = document.getElementById('prestige-btn');
+    const prestigeLevelEl = document.getElementById('prestige-level');
+    const clickValueEl = document.getElementById('click-value');
+    const prestigeBonusEl = document.getElementById('prestige-bonus');
+    const resetBtn = document.getElementById('reset-btn');
+    const wellnessBtn = document.getElementById('wellness-btn');
+    const wellnessMsg = document.getElementById('wellness-msg');
+
+    function saveGame() {
+      localStorage.setItem('money', money);
+      localStorage.setItem('internCount', internCount);
+      localStorage.setItem('prestige', prestige);
+    }
+
+    let internGlowShown = false;
+
+    function updateDisplay() {
+      moneyEl.innerText = `$${Math.floor(money)}`;
+      internCountEl.innerHTML = `Interns: ${internCount}<br><span id='toxic-interns' style='color:green'>Toxic: ${toxicInternCount}</span>`;
+      prestigeLevelEl.innerText = `Buildings: ${prestige}`;
+      clickValueEl.innerText = clickValue;
+
+      if (money >= 10 && !internGlowShown) {
+        hireInternBtn.classList.add('glow');
+        internGlowShown = true;
+        setTimeout(() => hireInternBtn.classList.remove('glow'), 3000);
+      }
+    }
+
+    clickBtn.addEventListener('click', () => {
+      money += clickValue;
+      updateDisplay();
+      saveGame();
+    });
+
+    hireInternBtn.addEventListener('click', () => {
+      if (money >= 10) {
+        money -= 10;
+        if (Math.random() < 0.05) {
+          toxicInternCount++;
+        } else {
+          internCount++;
+        }
+        updateDisplay();
+        saveGame();
+      }
+    });
+
+    wellnessBtn.addEventListener('click', () => {
+      if (!wellnessActive) {
+        const messages = money < 0
+          ? ["We are all doing yoga at a park today because debt."]
+          : [
+              "We are all going to Starbucks YAY!",
+              "Offsite with powerpoints about harassment",
+              "Pizza Party xD"
+            ];
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        wellnessMsg.innerText = msg;
+        const wellnessCost = Math.max(money / 2, 0);
+        money -= wellnessCost;
+        wellnessActive = true;
+        wellnessBtn.innerText = '☕ Wellness Active: Income Paused';
+        setTimeout(() => {
+          internCount += toxicInternCount;
+          toxicInternCount = 0;
+          wellnessActive = false;
+          wellnessBtn.innerText = '🧘 Wellness Initiative (Pause Income for 10s, Costs Half of $)';
+          wellnessMsg.innerText = '';
+          updateDisplay();
+          saveGame();
+        }, 10000);
+        updateDisplay();
+        saveGame();
+      }
+    });
+
+    prestigeBtn.addEventListener('click', () => {
+      if (money >= 1000) {
+        money -= 1000;
+        let bonus = 1;
+
+        if (Math.random() < 0.1 && prestige > 0) {
+          const loss = Math.max(Math.floor(prestige * 0.1), 1);
+          prestige -= loss;
+          prestigeBonusEl.innerText = `🚧 Poor Construction! Lost ${loss} Buildings`;
+        } else {
+          prestigeBonusEl.innerText = "";
+          prestige += bonus;
+        }
+
+        clickValue = 1 + prestige * 2;
+        updateDisplay();
+        saveGame();
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset all progress?')) {
+        money = 0;
+        internCount = 0;
+        prestige = 0;
+        toxicInternCount = 0;
+        clickValue = 2;
+        localStorage.clear();
+        internGlowShown = false;
+        hireInternBtn.classList.remove('glow');
+        prestigeBonusEl.innerText = "";
+        wellnessMsg.innerText = "";
+        updateDisplay();
+        saveGame();
+      }
+    });
+
+    setInterval(() => {
+      if (!wellnessActive) {
+        money += (internCount - toxicInternCount) * (1 + prestige);
+
+        const conversionChance = 0.01;
+        for (let i = 0; i < toxicInternCount; i++) {
+          if (internCount > 0 && Math.random() < conversionChance) {
+            internCount--;
+            toxicInternCount++;
+          }
+        }
+      }
+      updateDisplay();
+      saveGame();
+    }, 1000);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
