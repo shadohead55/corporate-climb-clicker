@@ -1,4 +1,4 @@
-# Corporate Climb Clicker
+# Corporate Climb Clicker v2.0
 
 **Corporate Climb** is a minimalist incremental clicker game built in HTML and JavaScript.
 
@@ -7,6 +7,7 @@ Click to work, hire interns to automate your income, and prestige by selling you
 ## 🔧 Features
 - Manual clicking for income
 - Interns that auto-click and scale over time
+- Managers that boost intern productivity
 - Prestige mechanic to reset with income bonuses
 - Fully client-side, runs in any modern browser
 
