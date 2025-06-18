@@ -152,7 +152,7 @@
 
     function maybeManagerQuote(action) {
       if (managerCount === 0) return;
-      const chance = Math.min(0.1 * managerCount, 0.75);
+      const chance = Math.min(0.01 * managerCount, 0.33);
       if (Math.random() < chance) {
         const options = managerQuotes[action];
         if (options) {
