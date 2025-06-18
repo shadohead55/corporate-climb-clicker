@@ -108,6 +108,8 @@
     const wellnessMsg = document.getElementById('wellness-msg');
     const managerChat = document.getElementById('manager-chat');
 
+    const managerNames = ["Alex", "Sam", "Jordan", "Morgan", "Taylor", "Casey"]; // optional random manager names
+
     function saveGame() {
       localStorage.setItem('money', money);
       localStorage.setItem('internCount', internCount);
@@ -158,9 +160,15 @@
         if (options) {
           const msg = options[Math.floor(Math.random() * options.length)];
           const line = document.createElement('div');
-          line.innerText = msg;
+          const name = managerNames[Math.floor(Math.random() * managerNames.length)];
+          line.innerText = `${name} (manager): ${msg}`;
           managerChat.appendChild(line);
           managerChat.scrollTop = managerChat.scrollHeight;
+          setTimeout(() => {
+            if (line.parentElement) {
+              line.remove();
+            }
+          }, 4000); // remove chat line after 4 seconds
         }
       }
     }
