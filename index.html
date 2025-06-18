@@ -27,6 +27,19 @@
     .upgrade { margin-top: 10px; }
     .highlight { color: #2f855a; font-weight: bold; margin-top: 5px; }
     .glow { animation: glow-pulse 1s infinite alternate; }
+    .chat-box {
+      margin: 20px auto;
+      width: 90%;
+      max-width: 320px;
+      height: 120px;
+      overflow-y: auto;
+      border: 1px solid #d0d7de;
+      border-radius: 5px;
+      background: #fff;
+      padding: 10px;
+      text-align: left;
+      color: #334e68;
+    }
     @keyframes glow-pulse {
       from { box-shadow: 0 0 5px #0b6efe; }
       to { box-shadow: 0 0 20px #0b6efe; }
@@ -65,6 +78,8 @@
     <button id="reset-btn">🗑️ Reset Game</button>
   </div>
 
+  <div id="manager-chat" class="chat-box"></div>
+
   <footer>
     Made with ❤️ by <a href="https://www.linkedin.com/in/anmolshah/" target="_blank">Anmol Shah</a>
   </footer>
@@ -91,6 +106,7 @@
     const resetBtn = document.getElementById('reset-btn');
     const wellnessBtn = document.getElementById('wellness-btn');
     const wellnessMsg = document.getElementById('wellness-msg');
+    const managerChat = document.getElementById('manager-chat');
 
     function saveGame() {
       localStorage.setItem('money', money);
@@ -100,6 +116,54 @@
     }
 
     let internGlowShown = false;
+
+    const managerQuotes = {
+      hireManager: [
+        "Yay, more of us!",
+        "Another salary to pay!",
+        "We're multiplying!"
+      ],
+      hireIntern: [
+        "Make sure you hit those KPIs!",
+        "Cheap labor incoming.",
+        "Do they even know what synergy means?"
+      ],
+      work: [
+        "That report better be done!",
+        "Don't forget your overtime!",
+        "Keep those margins up!"
+      ],
+      prestige: [
+        "Another building? You better fill it!",
+        "Hope there's room for my office!",
+        "More corporate real estate!"
+      ],
+      wellness: [
+        "Maybe we can expense this.",
+        "Does this count as team building?",
+        "Better not cut into our profits."
+      ],
+      reset: [
+        "A full reset? Typical.",
+        "All that hard work, gone!",
+        "Great, let's do this again."
+      ]
+    };
+
+    function maybeManagerQuote(action) {
+      if (managerCount === 0) return;
+      const chance = Math.min(0.1 * managerCount, 0.75);
+      if (Math.random() < chance) {
+        const options = managerQuotes[action];
+        if (options) {
+          const msg = options[Math.floor(Math.random() * options.length)];
+          const line = document.createElement('div');
+          line.innerText = msg;
+          managerChat.appendChild(line);
+          managerChat.scrollTop = managerChat.scrollHeight;
+        }
+      }
+    }
 
     function updateDisplay() {
       moneyEl.innerText = `$${Math.floor(money)}`;
@@ -117,6 +181,7 @@
 
     clickBtn.addEventListener('click', () => {
       money += clickValue;
+      maybeManagerQuote('work');
       updateDisplay();
       saveGame();
     });
@@ -131,6 +196,7 @@
         }
         updateDisplay();
         saveGame();
+        maybeManagerQuote('hireIntern');
       }
     });
 
@@ -140,6 +206,7 @@
         managerCount++;
         updateDisplay();
         saveGame();
+        maybeManagerQuote('hireManager');
       }
     });
 
@@ -169,6 +236,7 @@
         }, 10000);
         updateDisplay();
         saveGame();
+        maybeManagerQuote('wellness');
       }
     });
 
@@ -189,6 +257,7 @@
         clickValue = 1 + prestige * 2;
         updateDisplay();
         saveGame();
+        maybeManagerQuote('prestige');
       }
     });
 
@@ -207,13 +276,13 @@
         wellnessMsg.innerText = "";
         updateDisplay();
         saveGame();
+        maybeManagerQuote('reset');
       }
     });
 
     setInterval(() => {
       if (!wellnessActive) {
-        const managerBoost = 1 + managerCount * 0.5;
-        money += (internCount - toxicInternCount) * (1 + prestige) * managerBoost;
+        money += (internCount - toxicInternCount) * (1 + prestige);
 
         const conversionChance = 0.01;
         for (let i = 0; i < toxicInternCount; i++) {
