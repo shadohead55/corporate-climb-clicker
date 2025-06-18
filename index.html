@@ -291,8 +291,8 @@
     setInterval(() => {
       if (!wellnessActive) {
         money += (internCount - toxicInternCount) * (1 + prestige);
-
-        const conversionChance = 0.01;
+      
+        const conversionChance = 0.02;
         for (let i = 0; i < toxicInternCount; i++) {
           if (internCount > 0 && Math.random() < conversionChance) {
             internCount--;
