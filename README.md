@@ -8,6 +8,7 @@ Click to work, hire interns to automate your income, and prestige by selling you
 - Manual clicking for income
 - Interns that auto-click and scale over time
 - Managers are a money sink that occasionally drop snarky quotes
+- Manager quotes briefly appear in a chat window and fade after a few seconds
 - Prestige mechanic to reset with income bonuses
 - Fully client-side, runs in any modern browser
 
